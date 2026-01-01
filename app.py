@@ -1,7 +1,23 @@
 # app.py
 import streamlit as st
-from nltk.metrics import edit_distance
 import pickle
+from nltk.metrics import edit_distance
+import nltk
+
+# -----------------------------
+# Download required NLTK data for POS tagging
+# -----------------------------
+@st.cache_resource
+def setup_nltk():
+    nltk.download("punkt")
+    nltk.download("averaged_perceptron_tagger")
+    nltk.download("wordnet")
+
+setup_nltk()
+
+# -----------------------------
+# Import your modules after NLTK setup
+# -----------------------------
 from corrections import detect_errors, display_tokens, FUNCTION_WORDS
 
 # -----------------------------
@@ -106,7 +122,7 @@ if st.button("🔍 Check Text", use_container_width=True):
                             st.info("No suggestions available for grammar corrections.")
 
 # -----------------------------
-# Search / Explore Words (after main functionality)
+# Search / Explore Words
 # -----------------------------
 st.subheader("🔎 Search / Explore Words")
 search_word = st.text_input("Search a word in the corpus:", placeholder="Type a word")
@@ -127,3 +143,4 @@ with st.expander("📜 Vocabulary List (scrollable)"):
 # Footer
 # -----------------------------
 st.caption("📘 MSc Artificial Intelligence | Spelling & Grammar Correction System")
+
