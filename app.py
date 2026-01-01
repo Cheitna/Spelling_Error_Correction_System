@@ -143,4 +143,3 @@ with st.expander("📜 Vocabulary List (scrollable)"):
 # Footer
 # -----------------------------
 st.caption("📘 MSc Artificial Intelligence | Spelling & Grammar Correction System")
-
