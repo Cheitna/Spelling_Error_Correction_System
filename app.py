@@ -146,31 +146,8 @@
 
 # app.py
 import streamlit as st
-import nltk
-import pickle
 from nltk.metrics import edit_distance
-
-# -----------------------------
-# Ensure NLTK data is downloaded
-# -----------------------------
-def ensure_nltk_data():
-    """Check and download required NLTK data if missing."""
-    packages = {
-        "punkt": "tokenizers/punkt",
-        "averaged_perceptron_tagger": "taggers/averaged_perceptron_tagger",
-        "wordnet": "corpora/wordnet"
-    }
-    for pkg, path in packages.items():
-        try:
-            nltk.data.find(path)
-        except LookupError:
-            nltk.download(pkg)
-
-ensure_nltk_data()
-
-# -----------------------------
-# Import local modules AFTER NLTK is ready
-# -----------------------------
+import pickle
 from corrections import detect_errors, display_tokens, FUNCTION_WORDS
 
 # -----------------------------
@@ -220,6 +197,25 @@ user_input = st.text_area(
 # Spell & Grammar Check Button
 # -----------------------------
 if st.button("🔍 Check Text", use_container_width=True):
+
+    # -----------------------------
+    # Ensure NLTK resources are available at runtime
+    # -----------------------------
+    import nltk
+    for pkg, path in [
+        ("punkt", "tokenizers/punkt"),
+        ("averaged_perceptron_tagger", "taggers/averaged_perceptron_tagger"),
+        ("wordnet", "corpora/wordnet"),
+        ("omw-1.4", "corpora/omw-1.4")
+    ]:
+        try:
+            nltk.data.find(path)
+        except LookupError:
+            nltk.download(pkg)
+
+    # -----------------------------
+    # Validate input
+    # -----------------------------
     if not user_input.strip():
         st.warning("⚠️ Please enter some text before checking.")
     else:
@@ -228,7 +224,7 @@ if st.button("🔍 Check Text", use_container_width=True):
 
         # Detect spelling errors
         errors = detect_errors(user_input)
-        spelling_words = {err['word'].lower() for err in errors}
+        spelling_words = {err['word'].lower() for err in errors}  # red highlights
 
         # Map word → suggestions sorted by edit distance
         suggestion_map = {}
@@ -275,7 +271,7 @@ if st.button("🔍 Check Text", use_container_width=True):
                             st.info("No suggestions available for grammar corrections.")
 
 # -----------------------------
-# Search / Explore Words
+# Search / Explore Words (after main functionality)
 # -----------------------------
 st.subheader("🔎 Search / Explore Words")
 search_word = st.text_input("Search a word in the corpus:", placeholder="Type a word")
