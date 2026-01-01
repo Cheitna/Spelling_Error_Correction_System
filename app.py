@@ -152,16 +152,12 @@ import streamlit as st
 # Ensure NLTK resources exist BEFORE importing modules that use pos_tag
 # -----------------------------
 import nltk
-for pkg, path in [
-    ("punkt", "tokenizers/punkt"),
-    ("averaged_perceptron_tagger", "taggers/averaged_perceptron_tagger"),
-    ("wordnet", "corpora/wordnet"),
-    ("omw-1.4", "corpora/omw-1.4")
-]:
+for pkg in ["punkt", "wordnet", "omw-1.4", "averaged_perceptron_tagger", "averaged_perceptron_tagger_eng"]:
     try:
-        nltk.data.find(path)
+        nltk.data.find(f"taggers/{pkg}" if "tagger" in pkg else f"corpora/{pkg}" if "omw" in pkg else f"tokenizers/{pkg}")
     except LookupError:
         nltk.download(pkg)
+
 
 # -----------------------------
 # Now safe to import modules
